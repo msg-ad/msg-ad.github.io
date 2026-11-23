@@ -530,6 +530,18 @@
   .board-cnt { flex: none; width: 40px; text-align: right; font-size: 11px; color: #8b95a1; font-variant-numeric: tabular-nums; }
   .rx-sub { display: block; height: 1.5em; line-height: 1.5em; overflow: hidden; white-space: nowrap; }
   .rx-sub-new { margin-top: 4px; font-size: 12px; color: #767676; }
+  /* (11-23) 모션 텍스트 텍스트 위치 '배경 사용': 롤링 서브 문구 뒤에 연회색 박스 */
+  #chatBody.rx-text-bg .rx-sub { box-sizing: content-box; height: 1.5em; margin: 4px; padding: 0 4px; border-radius: 2px; background: #F3F4F6; box-shadow: 0 0 0 4px #F3F4F6; }   /* 세로 여백은 box-shadow로 (padding이면 다음 줄이 비쳐 보임) */
+  /* (11-23) 기본 텍스트·와이드 이미지·캐러셀 커머스·캐러셀 피드·프리미엄 동영상 텍스트 위치 문구 = 첨부본 본문형 모션 텍스트 기준 13px Regular #191919, 배경 #F2F7FE · 높이 31px · 좌우 10px · 라운드 6px */
+  #chatBody .rx-sub-new { font-size: 13px; font-weight: 400; color: #191919; }
+  #chatBody.rx-text-bg .rx-sub-new { margin: 10px 6px 6px; padding: 0 4px; border-radius: .5px; background: #F2F7FE; box-shadow: 0 0 0 6px #F2F7FE; }
+  #chatBody.rx-text-bg .rx-sub-new.rx-sub-commerce { margin: -2px 6px 8px; }
+  #chatBody.rx-text-bg .rx-li-sub { margin: 6px 4px 4px; }
+  .board-bg-check { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; font-size: 13px; color: #333; cursor: pointer; user-select: none; }
+  .board-bg-check input { position: absolute; width: 16px; height: 16px; opacity: 0; pointer-events: none; }
+  .board-bg-check .bb-mark { flex: none; width: 16px; height: 16px; background: #d1d6db; -webkit-mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iYmkgYmktY2hlY2stY2lyY2xlLWZpbGwiIHZpZXdCb3g9IjAgMCAxNiAxNiI+CiAgPHBhdGggZD0iTTE2IDhBOCA4IDAgMSAxIDAgOGE4IDggMCAwIDEgMTYgMG0tMy45Ny0zLjAzYS43NS43NSAwIDAgMC0xLjA4LjAyMkw3LjQ3NyA5LjQxNyA1LjM4NCA3LjMyM2EuNzUuNzUgMCAwIDAtMS4wNiAxLjA2TDYuOTcgMTEuMDNhLjc1Ljc1IDAgMCAwIDEuMDc5LS4wMmwzLjk5Mi00Ljk5YS43NS43NSAwIDAgMC0uMDEtMS4wNXoiLz4KPC9zdmc+") center / contain no-repeat; mask: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iYmkgYmktY2hlY2stY2lyY2xlLWZpbGwiIHZpZXdCb3g9IjAgMCAxNiAxNiI+CiAgPHBhdGggZD0iTTE2IDhBOCA4IDAgMSAxIDAgOGE4IDggMCAwIDEgMTYgMG0tMy45Ny0zLjAzYS43NS43NSAwIDAgMC0xLjA4LjAyMkw3LjQ3NyA5LjQxNyA1LjM4NCA3LjMyM2EuNzUuNzUgMCAwIDAtMS4wNiAxLjA2TDYuOTcgMTEuMDNhLjc1Ljc1IDAgMCAwIDEuMDc5LS4wMmwzLjk5Mi00Ljk5YS43NS43NSAwIDAgMC0uMDEtMS4wNXoiLz4KPC9zdmc+") center / contain no-repeat; }
+  .board-bg-check.on .bb-mark { background: var(--module-blue); }
+  .board-bg-check.dis { cursor: not-allowed; opacity: .4; }
   .rx-sub-new.rx-sub-commerce { margin-top: -8px; margin-bottom: 2px; }   /* 상품명과 2px (본문 gap 10px 상쇄) */
   /* (11-20) 캐러셀 커머스 + 모션 텍스트(텍스트 위치): 판매가 숫자만 슬롯처럼 굴러가 같은 값에서 멈춤(다른 문구로 바뀌지 않음). 정가 · 할인율은 그대로 */
   .rx-fin { display: inline-flex; align-items: flex-start; height: 1.3em; line-height: 1.3em; overflow: hidden; font-variant-numeric: tabular-nums; }
@@ -3332,7 +3344,7 @@
       const o = (sc.mods || {})[m.id] || {};
       state.mod[m.id] = { pos: o.pos && m.positions.includes(o.pos) ? o.pos : m.positions[0], opts: { ...defOpts(m.opts), ...(o.opts || {}) } };
     });
-    if (state.on.includes('motion')) { state.boardAt = sc.boardAt || 'image'; state.boardMode = sc.boardMode || 'roll'; }   // (11-20) 모션 텍스트 노출 위치 · 방식 (에이블리 = 흐름)
+    if (state.on.includes('motion')) { state.boardAt = sc.boardAt || 'image'; state.boardMode = sc.boardMode || 'roll'; state.boardBg = !!sc.boardBg; }   // (11-20) 모션 텍스트 노출 위치 · 방식 (에이블리 = 흐름)
     if (state.on.includes('timer')) state.timer = { ...defaultTimerSettings(), ...(sc.timer || {}) };
     if (state.on.includes('alarm')) state.alarm = defaultAlarmSettings();
     if (state.on.includes('discountBadge')) state.discountBadge = { text: sc.badge || '30%' };
@@ -3707,7 +3719,9 @@
     const atRow = `<div class="sub-row"><span class="sub-k">노출 위치</span><div class="chips">${BOARD_AT.map(m => {   // (11-21) 랭킹 캐러셀형 · 프리미엄 동영상형은 '이미지' 칩을 숨기지 않고 비활성으로 보여 줌
       const dis = m.key === 'image' && motionThumbBlocked();
       return `<button class="chip ${state.boardAt === m.key ? 'on' : ''}" data-bat="${m.key}"${dis ? ` disabled title="${state.type === 'video' ? '프리미엄 동영상형' : '랭킹 캐러셀형'}에서는 텍스트 위치만 선택할 수 있습니다"` : ''}>${m.label}</button>`; }).join('')}</div></div>`;
-    const modeRow = atRow + (atText ? '' : `<div class="sub-row"><span class="sub-k">노출 방식</span><div class="chips">${BOARD_MODES.map(m =>
+    const bgDis = boardBgBlocked(), bgOn = state.boardBg && !bgDis;
+    const bgRow = atText ? `<div class="sub-row"><span class="sub-k">배경</span><div class="chips"><label class="board-bg-check ${bgOn ? 'on' : ''} ${bgDis ? 'dis' : ''}" data-bbg${bgDis ? ` title="${boardBgTypeName()}에서는 배경을 사용할 수 없습니다"` : ''}><input type="checkbox" ${bgOn ? 'checked' : ''} ${bgDis ? 'disabled' : ''} aria-label="배경 사용"><span class="bb-mark" aria-hidden="true"></span>배경 사용</label></div></div>` : '';   // (11-23) 텍스트 위치일 때만: 롤링 문구 BG 사용 여부
+    const modeRow = atRow + bgRow + (atText ? '' : `<div class="sub-row"><span class="sub-k">노출 방식</span><div class="chips">${BOARD_MODES.map(m =>
       `<button class="chip ${state.boardMode === m.key ? 'on' : ''}" data-bmode="${m.key}">${m.label}</button>`).join('')}</div></div>`);
     if (!slots.length) return modeRow + `<div class="sub-row"><span class="sub-k">문구</span><span class="sub-fixed">적용 가능한 썸네일이 없습니다</span></div>`;
     const field = (i, line, arr, width) => {
@@ -3887,6 +3901,7 @@
       };
     });
     document.querySelectorAll('[data-bmode]').forEach(b => b.onclick = () => { state.boardMode = b.dataset.bmode; update(); });
+    document.querySelectorAll('[data-bbg]').forEach(b => b.onclick = e => { e.preventDefault(); e.stopPropagation(); if (boardBgBlocked()) return; state.boardBg = !state.boardBg; update(); });
     document.querySelectorAll('[data-bat]').forEach(b => b.onclick = () => { state.boardAt = b.dataset.bat; if (state.boardAt === 'text' && state.boardMode !== 'roll') state.boardMode = 'roll'; update(); });
     document.querySelectorAll('[data-benefit-custom]').forEach(b => b.onclick = () => {
       state.benefitCustomOn = !state.benefitCustomOn;
@@ -6717,6 +6732,10 @@
     }
   };
   state.boardMode = 'roll';
+  const BOARD_BG_BLOCK = ['wideList', 'carCommerce', 'catalog', 't-ranking', 't-tag'];   // (11-23) 텍스트 위치 '배경 사용' 비활성 타입
+  const boardBgBlocked = () => BOARD_BG_BLOCK.includes(state.type);
+  const boardBgTypeName = () => ((typeof BASE_TYPES !== 'undefined' && BASE_TYPES.find(t => t.key === state.type)) || (typeof TEMPLATE_ITEMS !== 'undefined' && TEMPLATE_ITEMS.find(t => t.id === state.type)) || {}).name || '이 타입';
+  state.boardBg = false;   // (11-23) 텍스트 위치 롤링 문구 배경(BG) 사용 여부
   state.boardAt = 'image';   // (11-20) 모션 텍스트 노출 위치: image = 썸네일 하단 띠 · text = 텍스트 영역 서브 문구 롤링 (G마켓 참고 영상)
   state.boardTextByType = {};
   function boardDefaults(type, mode) {
@@ -6777,7 +6796,10 @@
     restore(data.bt2, BOARD_DEFAULT2, ['리뷰 평점 4.9', '무료교환ㆍ무료배송'], 'second');
   }
   function applyBoard() {
-    if (!activeMods().some(x => x.id === 'motion')) return;
+    const cb = document.getElementById('chatBody');
+    const motionOn = activeMods().some(x => x.id === 'motion');
+    if (cb) cb.classList.toggle('rx-text-bg', motionOn && state.boardAt === 'text' && !!state.boardBg && !boardBgBlocked());   // (11-23) 텍스트 위치 배경 사용
+    if (!motionOn) return;
     const slots = boardSlots(state.type);
     if (state.type === 't-tag' && state.boardAt === 'text') return applyBoardTagText(slots);
     const thumbs = state.type === 't-tag' ? [...document.querySelectorAll('#chatBody .tag-photo')].slice(0, 1)   // (11-21) 이미지 태그형: 대표 이미지 하단 띠
@@ -8596,7 +8618,7 @@
     }
     const data = { t: state.type, r: state.ratio, sr: state.singleRatio || undefined, mt: state.modTab !== 'ui' ? state.modTab : undefined, lb: state.on.includes('liveBadge') ? state.liveBadge : undefined, on: state.on, rv: state.recv.length ? state.recv : undefined, rvo: state.recv.length ? Object.fromEntries(state.recv.map(id => [id, state.recvOpt[id]])) : undefined,
       m: Object.fromEntries(state.on.map(id => [id, { p: state.mod[id].pos, o: Object.fromEntries(Object.entries(state.mod[id].opts).map(([k, v]) => [k, v instanceof Set ? [...v] : v])) }])),
-      tp: isTemplate() ? state.tpl[state.type] : undefined, ps: state.preset || undefined, sc: state.scenario || undefined, pg: state.page, an: Object.keys(state.ans).length ? state.ans : undefined, bt: state.on.includes('motion') ? state.boardTexts : undefined, bt2: state.on.includes('motion') ? state.boardTexts2 : undefined, bm: state.on.includes('motion') ? state.boardMode : undefined, ba: state.on.includes('motion') && state.boardAt === 'text' ? 'text' : undefined, sb: state.swipeBg && state.swipeBg !== '포인트 컬러' ? state.swipeBg : undefined, btx: state.boardTextByType, te: state.timer, bc: state.benefitCustomOn ? state.benefitCustom : undefined, db: state.discountBadge, rk: state.ranking, gd: state.grid, tg: state.tag, al: state.alarm, cp: state.coupons, ca: state.on.includes('calendar') ? { startDate: state.calendar.startDate, defaultIndex: state.calendar.defaultIndex, bg: state.calendar.bg } : undefined, tlv: TILE_LAYOUT_VERSION };
+      tp: isTemplate() ? state.tpl[state.type] : undefined, ps: state.preset || undefined, sc: state.scenario || undefined, pg: state.page, an: Object.keys(state.ans).length ? state.ans : undefined, bt: state.on.includes('motion') ? state.boardTexts : undefined, bt2: state.on.includes('motion') ? state.boardTexts2 : undefined, bm: state.on.includes('motion') ? state.boardMode : undefined, ba: state.on.includes('motion') && state.boardAt === 'text' ? 'text' : undefined, bb: state.on.includes('motion') && state.boardAt === 'text' && state.boardBg ? 1 : undefined, sb: state.swipeBg && state.swipeBg !== '포인트 컬러' ? state.swipeBg : undefined, btx: state.boardTextByType, te: state.timer, bc: state.benefitCustomOn ? state.benefitCustom : undefined, db: state.discountBadge, rk: state.ranking, gd: state.grid, tg: state.tag, al: state.alarm, cp: state.coupons, ca: state.on.includes('calendar') ? { startDate: state.calendar.startDate, defaultIndex: state.calendar.defaultIndex, bg: state.calendar.bg } : undefined, tlv: TILE_LAYOUT_VERSION };
     history.replaceState(null, '', '#' + encodeURIComponent(JSON.stringify(data)));
   }
   function readHash() {
@@ -8662,6 +8684,7 @@
       if (d.pg === 2) state.page = 2;
       if (BOARD_MODES.some(m => m.key === d.bm)) state.boardMode = d.bm;
       if (d.ba === 'text') state.boardAt = 'text';
+      if (d.bb) state.boardBg = true;
       if (SWIPE_BG_MODES.includes(d.sb)) state.swipeBg = d.sb;
       readBoardSettings(d);
       if (d.an) QUESTIONS.forEach(q => { if (d.an[q.key] === 'y' || d.an[q.key] === 'n') state.ans[q.key] = d.an[q.key]; });
@@ -8710,7 +8733,7 @@
     Object.assign(state, {
       type: 'image', ratio: '3:4', singleRatio: '', on: [], mod: {}, tpl: {}, preset: '', ans: {}, page: targetPage, scenario: '',
       timer: defaultTimerSettings(), discountBadge: { text: '30%' }, coupons: defaultCouponSettings(), couponUi: { open: false, received: [] }, calendar: defaultCalendarSettings(), liveBadge: defaultLiveBadgeSettings(), liveBadgeUi: defaultLiveBadgeUi(),
-      ranking: { open: '', pages: {} }, grid: { selected: -1 }, tag: { selected: -1 }, alarm: defaultAlarmSettings(), boardMode: 'roll', boardAt: 'image', swipeBg: '', boardTextByType: {}, recv: [], recvOpt: RECV_DEFAULT(), fold: []
+      ranking: { open: '', pages: {} }, grid: { selected: -1 }, tag: { selected: -1 }, alarm: defaultAlarmSettings(), boardMode: 'roll', boardAt: 'image', boardBg: false, swipeBg: '', boardTextByType: {}, recv: [], recvOpt: RECV_DEFAULT(), fold: []
     });
     MODULES.forEach(m => state.mod[m.id] = { pos: m.positions[0], opts: defOpts(m.opts) });
     TEMPLATE_ITEMS.forEach(t => state.tpl[t.id] = defOpts(t.opts));
